@@ -1,9 +1,8 @@
-from numpy import linalg as LA
-from typing import Callable
+import math
 import matplotlib.pyplot as plt
 import matplotlib.animation as anime
 import numpy as np
-import math
+from numpy import linalg as la
 from scipy.linalg import solve_banded
 
 
@@ -176,10 +175,10 @@ class HeatEquationSolver:
             return solutions
 
     def _norma(self, num_result):
-        C_abs = LA.norm(self.anl_solution - num_result, np.inf)
-        I_abs = LA.norm(self.anl_solution - num_result) * math.sqrt(self.h)
-        C_rel = C_abs / LA.norm(self.anl_solution, np.inf)
-        I_rel = I_abs / (LA.norm(self.anl_solution) * math.sqrt(self.h))
+        C_abs = la.norm(self.anl_solution - num_result, np.inf)
+        I_abs = la.norm(self.anl_solution - num_result) * math.sqrt(self.h)
+        C_rel = C_abs / la.norm(self.anl_solution, np.inf)
+        I_rel = I_abs / (la.norm(self.anl_solution) * math.sqrt(self.h))
         print("a) {}\nb) {}\nc) {} %\nd) {} %\n".format(C_abs, I_abs, C_rel * 100, I_rel * 100))
 
 
@@ -225,6 +224,11 @@ if __name__ == "__main__":
             if count == 0:
                 ax.relim()
                 ax.autoscale_view()
+            ymin, ymax = ax.get_ylim()
+            if ymax < n_sol.max():
+                ax.set_ylim(ymin, 2 * ymax)
+            elif ymin > n_sol.min():
+                ax.set_ylim(ymin / 2 if ymin > 0 else 2 * ymin, ymax)
             ax.set_title("Iteration {}".format(count))
             count += 1
             return num_line,
